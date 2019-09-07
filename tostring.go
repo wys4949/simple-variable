@@ -1,10 +1,12 @@
 package simple_variable
 
 import (
+	"encoding/json"
 	"math"
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type ToSring struct {
@@ -40,13 +42,17 @@ func (T *ToSring) Str(v interface{}) (returnVar  string) {
 	case "int64":
 		returnVar = strconv.FormatInt(v.(int64), 10)
 	case "int32":
-		returnVar = strconv.FormatInt(v.(int64), 10)
+		returnVar = strconv.FormatInt(int64(v.(int32)), 10)
+	case "int16":
+		returnVar = strconv.FormatInt(int64(v.(int16)), 10)
 	case "string":
 		returnVar = v.(string)
 	case "float64":
 		returnVar = strconv.FormatFloat(v.(float64), 'f', -1, 64)
 	case "[]uint8":
 		returnVar = string(v.([]byte)[:])
+	case "time.Time":
+		returnVar =  v.(time.Time).Format("2006-01-02 15:04:05")
 	case  "bool":
 		if v.(bool) {
 			returnVar = ""
@@ -80,7 +86,9 @@ func (T *ToSring) StrAdd(args ...interface{}) (str string) {
 		case "int64":
 			str = str + strconv.FormatInt(arg.(int64), 10)
 		case "int32":
-			str = str + strconv.FormatInt(arg.(int64), 10)
+			str = str + strconv.FormatInt(int64(arg.(int32)), 10)
+		case "int16":
+			str = str + strconv.FormatInt(int64(arg.(int16)), 10)
 		case "float64":
 			str = str +  strconv.FormatFloat(arg.(float64), 'f', -1, 64)
 		case "float32":
@@ -125,6 +133,8 @@ func (T *ToSring) StrSubtract(args ...interface{}) (str string) {
 			tmp = strconv.FormatInt(arg.(int64), 10)
 		case "int32":
 			tmp = strconv.FormatInt(arg.(int64), 10)
+		case "int16":
+			tmp = strconv.FormatInt(int64(arg.(int16)), 10)
 		case "float64":
 			tmp =  strconv.FormatFloat(arg.(float64), 'f', 2, 64)
 		case "float32":
@@ -150,6 +160,91 @@ func (T *ToSring) StrSubtract(args ...interface{}) (str string) {
 
 
 
+//转Bool
+func (T *ToSring) Bool(v interface{}) (returnVar bool) {
+	varType := T.TypeOf(v)
+	switch varType {
+	case "nil":
+		returnVar =  false
+	case "uint":
+		if int( v.(uint)) == 0{
+			returnVar =  false
+		}else{
+			returnVar = true
+		}
+	case "uint8":
+		if int( v.(uint8)) == 0{
+			returnVar =  false
+		}else{
+			returnVar = true
+		}
+	case "uint32":
+		if int( v.(uint32)) == 0{
+			returnVar =  false
+		}else{
+			returnVar = true
+		}
+	case "uint64":
+		if int( v.(uint64)) == 0{
+			returnVar =  false
+		}else{
+			returnVar = true
+		}
+	case "int":
+		if int( v.(int)) == 0{
+			returnVar =  false
+		}else{
+			returnVar = true
+		}
+	case "int64":
+		if v.(int64) == 0{
+			returnVar =  false
+		}else{
+			returnVar = true
+		}
+	case "int32":
+		if v.(int32) == 0{
+			returnVar =  false
+		}else{
+			returnVar = true
+		}
+	case "int16":
+		if v.(int16) == 0{
+			returnVar =  false
+		}else{
+			returnVar = true
+		}
+	case "string":
+
+		if v.(string) == "FALSE" || v.(string) == "false" || v.(string) == "0" || v.(string) ==""{
+			returnVar =  false
+		}else{
+			returnVar = true
+		}
+
+	case "float64":
+		if v.(float64) == 0{
+			returnVar =  false
+		}else{
+			returnVar = true
+		}
+	case "float32":
+			if v.(float32) == 0{
+				returnVar =  false
+			}else{
+				returnVar = true
+			}
+	case  "bool":
+		if v.(bool) == false {
+			returnVar = false
+		}else{
+			returnVar = true
+		}
+	}
+	return
+}
+
+
 //转str
 func (T *ToSring) Int(v interface{}) (returnVar int) {
 	varType := T.TypeOf(v)
@@ -168,8 +263,10 @@ func (T *ToSring) Int(v interface{}) (returnVar int) {
 		returnVar = v.(int)
 	case "int64":
 		returnVar,_ = strconv.Atoi(strconv.FormatInt(v.(int64), 10))
+	case "int16":
+		returnVar = int(v.(int16))
 	case "int32":
-		returnVar,_ = strconv.Atoi(strconv.FormatInt(v.(int64), 10))
+		returnVar = int(v.(int32))
 	case "string":
 		returnVar,_ = strconv.Atoi(v.(string))
 	case "float64":
@@ -197,8 +294,10 @@ func (T *ToSring) Int64(v interface{}) (returnVar int64) {
 		returnVar =  int64(v.(int))
 	case "int64":
 		returnVar,_ = v.(int64)
+	case "int16":
+		returnVar = int64(v.(int16))
 	case "int32":
-		returnVar,_ = v.(int64)
+		returnVar = int64(v.(int32))
 	case "string":
 		returnVar,_ = strconv.ParseInt(v.(string), 10, 64)
 	case "float64":
@@ -215,7 +314,43 @@ func (T *ToSring) Int64(v interface{}) (returnVar int64) {
 	return
 }
 
+//转str
+func (T *ToSring) Int16(v interface{}) (returnVar int16) {
+	varType := T.TypeOf(v)
+	switch varType {
+	case "nil":
+		returnVar = int16(0)
+	case "int":
+		returnVar =  int16(v.(int))
+	case "int16":
+		returnVar,_ = v.(int16)
+	case "int32":
+		returnVar =  int16(v.(int32))
+	case "int64":
+		returnVar = int16(v.(int64))
+	case "string":
+		rVTmp,_ := strconv.Atoi(v.(string))
+		returnVar = int16( rVTmp)
+	case "float64":
+		returnVar =  int16( math.Floor( v.(float64)))
+	case "float32":
+		returnVar = int16( math.Floor( v.(float64)))
+	case  "bool":
+		if v.(bool) == false {
+			returnVar =int16(0)
+		}else{
+			returnVar = int16(1)
+		}
+	}
+	return
+}
+/*
 
+	case "int16":
+		returnVar = int(v.(int16))
+	case "int32":
+		returnVar = int(v.(int32))
+ */
 //转float64
 func (T *ToSring) Float64(v interface{}) (returnVar float64) {
 	varType := T.TypeOf(v)
@@ -228,6 +363,8 @@ func (T *ToSring) Float64(v interface{}) (returnVar float64) {
 		returnVar,_ =strconv.ParseFloat(T.Str(v.(int64)), 64)
 	case "int32":
 		returnVar,_ =strconv.ParseFloat(T.Str(v.(int32)), 64)
+	case "int16":
+		returnVar,_ =strconv.ParseFloat(T.Str(v.(int16)), 64)
 	case "string":
 		returnVar,_ =  strconv.ParseFloat(v.(string), 64)
 	case "float64":
@@ -259,7 +396,13 @@ func (T *ToSring)Precision(f float64, prec int, round bool) float64 {
 	return math.Trunc((f)*pow10_n) / pow10_n
 }
 
+/*
 
+	case "int16":
+		returnVar = int(v.(int16))
+	case "int32":
+		returnVar = int(v.(int32))
+*/
 
 //加
 func (T *ToSring) MathAdd(args ...interface{}) (num float64) {
@@ -286,6 +429,8 @@ func (T *ToSring) MathAdd(args ...interface{}) (num float64) {
 			tmp =  T.Float64(arg.(int64))
 		case "int32":
 			tmp =  T.Float64(arg.(int32))
+		case "int16":
+			tmp =  T.Float64(arg.(int16))
 		case "float64":
 			tmp =  T.Float64(arg.(float64))
 		case "float32":
@@ -300,6 +445,13 @@ func (T *ToSring) MathAdd(args ...interface{}) (num float64) {
 	return
 }
 
+/*
+
+	case "int16":
+		returnVar = int(v.(int16))
+	case "int32":
+		returnVar = int(v.(int32))
+*/
 //减
 func (T *ToSring) MathSubtract(args ...interface{}) (num float64) {
 	num = 0.00
@@ -325,6 +477,8 @@ func (T *ToSring) MathSubtract(args ...interface{}) (num float64) {
 			tmp =  T.Float64(arg.(int64))
 		case "int32":
 			tmp =  T.Float64(arg.(int32))
+		case "int16":
+			tmp =  T.Float64(arg.(int16))
 		case "float64":
 			tmp =  T.Float64(arg.(float64))
 		case "float32":
@@ -365,6 +519,8 @@ func (T *ToSring) MathMultiply(args ...interface{}) (num float64) {
 			tmp =  T.Float64(arg.(int64))
 		case "int32":
 			tmp =  T.Float64(arg.(int32))
+		case "int16":
+			tmp =  T.Float64(arg.(int16))
 		case "float64":
 			tmp =  T.Float64(arg.(float64))
 		case "float32":
@@ -404,6 +560,8 @@ func (T *ToSring) MathDivide(args ...interface{}) (num float64) {
 			tmp =  T.Float64(arg.(int64))
 		case "int32":
 			tmp =  T.Float64(arg.(int32))
+		case "int16":
+			tmp =  T.Float64(arg.(int16))
 		case "float64":
 			tmp =  T.Float64(arg.(float64))
 		case "float32":
@@ -445,6 +603,8 @@ func (T *ToSring) MathPow(args ...interface{}) (num float64) {
 			tmp =  T.Float64(arg.(int64))
 		case "int32":
 			tmp =  T.Float64(arg.(int32))
+		case "int16":
+			tmp =  T.Float64(arg.(int16))
 		case "float64":
 			tmp =  T.Float64(arg.(float64))
 		case "float32":
@@ -487,6 +647,8 @@ func (T *ToSring) MathRemainder(args ...interface{}) (num int) {
 			tmp =  T.Int(arg.(int64))
 		case "int32":
 			tmp =  T.Int(arg.(int32))
+		case "int16":
+			tmp =  T.Int(arg.(int16))
 		case "float64":
 			tmp =  T.Int(arg.(float64))
 		case "float32":
@@ -522,6 +684,8 @@ func (T *ToSring) Byte(arg interface{}) (bytes []byte) {
 		tmp =  T.Str(arg.(int64))
 	case "int32":
 		tmp =  T.Str(arg.(int32))
+	case "int16":
+		tmp =  T.Str(arg.(int16))
 	case "float64":
 		tmp =  T.Str(arg.(float64))
 	case "float32":
@@ -536,6 +700,47 @@ func (T *ToSring) Byte(arg interface{}) (bytes []byte) {
 	bytes  = []byte(tmp)
 	return
 }
+
+
+func (T *ToSring) Time(arg interface{}) (times time.Time) {
+	tmp := ""
+	switch T.TypeOf(arg) {
+	case "nil":
+		tmp =  T.Str(0)
+	case "uint":
+		tmp =  T.Str(arg.(uint))
+	case "uint8":
+		tmp =  T.Str(arg.(uint8))
+	case "uint32":
+		tmp =  T.Str(arg.(uint32))
+	case "uint64":
+		tmp =  T.Str(arg.(uint64))
+	case "int":
+		tmp =  T.Str(arg.(int))
+	case "string":
+		tmp =  T.Str(arg.(string))
+	case "int64":
+		tmp =  T.Str(arg.(int64))
+	case "int32":
+		tmp =  T.Str(arg.(int32))
+	case "int16":
+		tmp =  T.Str(arg.(int16))
+	case "float64":
+		tmp =  T.Str(arg.(float64))
+	case "float32":
+		tmp =  T.Str(arg.(float32))
+	case "bool":
+		if arg.(bool) == false {
+			tmp = ""
+		}else if  arg.(bool) == true{
+			tmp = "1"
+		}
+	}
+	times,_  = time.Parse("2006-01-02 15:04:05",tmp)
+	return
+}
+
+
 
 //弱类型转换 喵
 func (T *ToSring) IsSame(args ...interface{}) (isSame bool) {
@@ -652,6 +857,57 @@ func (T *ToSring) IsSame(args ...interface{}) (isSame bool) {
 			break
 		}
 	}
+	return
+}
+
+
+
+func (T *ToSring) Split(arg string ,l string)(value  []string){
+	value = make([]string,0)
+	if arg == "" {
+		return
+	}
+	value = strings.Split(arg, l)
+	return
+}
+
+
+func (T *ToSring)Json(mapInstances interface{}) (jsonStr string, err error)  {
+	jsonStrs, err := json.Marshal(mapInstances)
+	jsonStr = ""
+	if err != nil {
+		return
+	}
+	jsonStr = T.Str(jsonStrs)
+	return
+}
+
+
+
+func (T *ToSring)JsonToMaps(mapInstances interface{}) (mapInstance []map[string]string, err error)  {
+	jsonStrs, err := json.Marshal(mapInstances)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(jsonStrs, &mapInstance)
+	return
+}
+func (T *ToSring)JsonToInterface(mapInstances interface{}) (mapInstance []map[string]interface{}, err error)  {
+	jsonStrs, err := json.Marshal(mapInstances)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(jsonStrs, &mapInstance)
+	return
+}
+
+
+func (T *ToSring)JsonToMap(mapInstances interface{}) (mapInstance map[string]string, err error)  {
+	jsonStrs, err := json.Marshal(mapInstances)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(jsonStrs, &mapInstance)
 	return
 }
 
