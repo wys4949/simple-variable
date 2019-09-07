@@ -701,6 +701,48 @@ func (T *ToSring) Byte(arg interface{}) (bytes []byte) {
 	return
 }
 
+func (T *ToSring) Uint(arg interface{}) (uints uint) {
+	str := T.Str(arg)
+	_ = T.StrToUint(str, &uints)
+	return
+}
+func (T *ToSring) Uint8(arg interface{}) (uints uint8) {
+	str := T.Str(arg)
+	_ = T.StrToUint(str, &uints)
+	return
+}
+func (T *ToSring) Uint16(arg interface{}) (uints uint16) {
+	str := T.Str(arg)
+	_ = T.StrToUint(str, &uints)
+	return
+}
+func (T *ToSring) Uint32(arg interface{}) (uints uint32) {
+	str := T.Str(arg)
+	_ = T.StrToUint(str, &uints)
+	return
+}
+
+func (T *ToSring)StrToUint(strNumber string, value interface{}) (err error) {
+	var number interface{}
+	number, err = strconv.ParseUint(strNumber, 10, 64)
+	switch v := number.(type) {
+	case uint64:
+		switch d := value.(type) {
+		case *uint64:
+			*d = v
+		case *uint:
+			*d = uint(v)
+		case *uint16:
+			*d = uint16(v)
+		case *uint32:
+			*d = uint32(v)
+		case *uint8:
+			*d = uint8(v)
+		}
+	}
+	return
+}
+
 
 func (T *ToSring) Time(arg interface{}) (times time.Time) {
 	tmp := ""
@@ -893,11 +935,8 @@ func (T *ToSring)JsonToMaps(mapInstances interface{}) (mapInstance []map[string]
 	return
 }
 func (T *ToSring)JsonToInterface(mapInstances interface{}) (mapInstance []map[string]interface{}, err error)  {
-	jsonStrs, err := json.Marshal(mapInstances)
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(jsonStrs, &mapInstance)
+	jsonStr := T.Byte(mapInstances)
+	err = json.Unmarshal(jsonStr, &mapInstance)
 	return
 }
 

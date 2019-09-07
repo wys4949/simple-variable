@@ -72,3 +72,16 @@ func (T *ToMap) StrMapColumn(slices []map[string]string, arg string) (results ma
 	}
 	return
 }
+
+//reverse
+
+//切片转 指定key map
+func (T *ToMap) Reverse(arg map[string]string) (results map[string]string ){
+	//S := new(ToSring)
+	results = map[string]string{}
+	//var ks string
+	for k,v := range arg{
+		results[v] = k
+	}
+	return
+}
