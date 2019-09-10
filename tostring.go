@@ -939,6 +939,11 @@ func (T *ToSring)JsonToInterface(mapInstances interface{}) (mapInstance []map[st
 	err = json.Unmarshal(jsonStr, &mapInstance)
 	return
 }
+func (T *ToSring)JsonToInterfaceFirst(mapInstances interface{}) (mapInstance map[string]interface{}, err error)  {
+	jsonStr := T.Byte(mapInstances)
+	err = json.Unmarshal(jsonStr, &mapInstance)
+	return
+}
 
 
 func (T *ToSring)JsonToMap(mapInstances interface{}) (mapInstance map[string]string, err error)  {

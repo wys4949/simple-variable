@@ -18,6 +18,19 @@ func (T *ToMap)Struct2Map(obj interface{}) map[string]string {
 	return data
 }
 
+func (T *ToMap)Struct2MapInterface(obj interface{}) map[string]interface{} {
+	S := new(ToSring)
+	obj_v := reflect.ValueOf(obj)
+	v := obj_v.Elem()
+	typeOfType := v.Type()
+	var data = make(map[string]interface{})
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		data[typeOfType.Field(i).Name] = S.Str(field.Interface())
+	}
+	return data
+}
+
 
 
 
@@ -85,3 +98,5 @@ func (T *ToMap) Reverse(arg map[string]string) (results map[string]string ){
 	}
 	return
 }
+
+//flip
