@@ -9,12 +9,12 @@ import (
 	"time"
 )
 
-type ToSring struct {
+type ToString struct {
 
 }
 
 //获取类型
-func (T *ToSring) TypeOf(v interface{}) (t string ){
+func (T *ToString) TypeOf(v interface{}) (t string ){
 	t = "nil"
 	if v != nil{
 		t = reflect.TypeOf(v).String()
@@ -23,7 +23,7 @@ func (T *ToSring) TypeOf(v interface{}) (t string ){
 }
 
 //转str
-func (T *ToSring) Str(v interface{}) (returnVar  string) {
+func (T *ToString) Str(v interface{}) (returnVar  string) {
 	// inter.(type)
 	varType := T.TypeOf(v)
 	switch varType {
@@ -64,7 +64,7 @@ func (T *ToSring) Str(v interface{}) (returnVar  string) {
 	return
 }
 
-func (T *ToSring) StrAdd(args ...interface{}) (str string) {
+func (T *ToString) StrAdd(args ...interface{}) (str string) {
 	str = ""
 	for _, arg := range args {
 
@@ -109,7 +109,7 @@ func (T *ToSring) StrAdd(args ...interface{}) (str string) {
 }
 
 
-func (T *ToSring) StrSubtract(args ...interface{}) (str string) {
+func (T *ToString) StrSubtract(args ...interface{}) (str string) {
 	str = ""
 	tmp := ""
 
@@ -161,7 +161,7 @@ func (T *ToSring) StrSubtract(args ...interface{}) (str string) {
 
 
 //转Bool
-func (T *ToSring) Bool(v interface{}) (returnVar bool) {
+func (T *ToString) Bool(v interface{}) (returnVar bool) {
 	varType := T.TypeOf(v)
 	switch varType {
 	case "nil":
@@ -246,7 +246,7 @@ func (T *ToSring) Bool(v interface{}) (returnVar bool) {
 
 
 //转str
-func (T *ToSring) Int(v interface{}) (returnVar int) {
+func (T *ToString) Int(v interface{}) (returnVar int) {
 	varType := T.TypeOf(v)
 	switch varType {
 	case "nil":
@@ -285,7 +285,7 @@ func (T *ToSring) Int(v interface{}) (returnVar int) {
 
 
 //转str
-func (T *ToSring) Int64(v interface{}) (returnVar int64) {
+func (T *ToString) Int64(v interface{}) (returnVar int64) {
 	varType := T.TypeOf(v)
 	switch varType {
 	case "nil":
@@ -314,8 +314,8 @@ func (T *ToSring) Int64(v interface{}) (returnVar int64) {
 	return
 }
 
-//转str
-func (T *ToSring) Int16(v interface{}) (returnVar int16) {
+//Int16
+func (T *ToString) Int16(v interface{}) (returnVar int16) {
 	varType := T.TypeOf(v)
 	switch varType {
 	case "nil":
@@ -344,6 +344,69 @@ func (T *ToSring) Int16(v interface{}) (returnVar int16) {
 	}
 	return
 }
+
+
+//Int8
+func (T *ToString) Int8(v interface{}) (returnVar int8) {
+	varType := T.TypeOf(v)
+	switch varType {
+	case "nil":
+		returnVar = int8(0)
+	case "int":
+		returnVar =  int8(v.(int))
+	case "int8":
+		returnVar,_ = v.(int8)
+	case "int32":
+		returnVar =  int8(v.(int32))
+	case "int64":
+		returnVar = int8(v.(int64))
+	case "string":
+		rVTmp,_ := strconv.Atoi(v.(string))
+		returnVar = int8( rVTmp)
+	case "float64":
+		returnVar =  int8( math.Floor( v.(float64)))
+	case "float32":
+		returnVar = int8( math.Floor( v.(float64)))
+	case  "bool":
+		if v.(bool) == false {
+			returnVar =int8(0)
+		}else{
+			returnVar = int8(1)
+		}
+	}
+	return
+}
+
+//Int32
+func (T *ToString) Int32(v interface{}) (returnVar int32) {
+	varType := T.TypeOf(v)
+	switch varType {
+	case "nil":
+		returnVar = int32(0)
+	case "int":
+		returnVar =  int32(v.(int))
+	case "int32":
+		returnVar,_ = v.(int32)
+	case "int32":
+		returnVar =  int32(v.(int32))
+	case "int64":
+		returnVar = int32(v.(int64))
+	case "string":
+		rVTmp,_ := strconv.Atoi(v.(string))
+		returnVar = int32( rVTmp)
+	case "float64":
+		returnVar =  int32( math.Floor( v.(float64)))
+	case "float32":
+		returnVar = int32( math.Floor( v.(float64)))
+	case  "bool":
+		if v.(bool) == false {
+			returnVar =int32(0)
+		}else{
+			returnVar = int32(1)
+		}
+	}
+	return
+}
 /*
 
 	case "int16":
@@ -352,7 +415,7 @@ func (T *ToSring) Int16(v interface{}) (returnVar int16) {
 		returnVar = int(v.(int32))
  */
 //转float64
-func (T *ToSring) Float64(v interface{}) (returnVar float64) {
+func (T *ToString) Float64(v interface{}) (returnVar float64) {
 	varType := T.TypeOf(v)
 	switch varType {
 	case "nil":
@@ -381,14 +444,14 @@ func (T *ToSring) Float64(v interface{}) (returnVar float64) {
 	return
 }
 
-func (T *ToSring)StrRound(str string, prec int, round bool) float64 {
+func (T *ToString)StrRound(str string, prec int, round bool) float64 {
 	f,_ := strconv.ParseFloat(str,64)
 	return T.Precision(f,prec,round)
 }
-func (T *ToSring)Round(f float64, prec int, round bool) float64 {
+func (T *ToString)Round(f float64, prec int, round bool) float64 {
 	return T.Precision(f,prec,round)
 }
-func (T *ToSring)Precision(f float64, prec int, round bool) float64 {
+func (T *ToString)Precision(f float64, prec int, round bool) float64 {
 	pow10_n := math.Pow10(prec)
 	if round {
 		return math.Trunc((f + 0.5/pow10_n)*pow10_n)/pow10_n
@@ -405,7 +468,7 @@ func (T *ToSring)Precision(f float64, prec int, round bool) float64 {
 */
 
 //加
-func (T *ToSring) MathAdd(args ...interface{}) (num float64) {
+func (T *ToString) MathAdd(args ...interface{}) (num float64) {
 	num = 0.00
 	var tmp float64
 
@@ -453,7 +516,7 @@ func (T *ToSring) MathAdd(args ...interface{}) (num float64) {
 		returnVar = int(v.(int32))
 */
 //减
-func (T *ToSring) MathSubtract(args ...interface{}) (num float64) {
+func (T *ToString) MathSubtract(args ...interface{}) (num float64) {
 	num = 0.00
 	var tmp float64
 
@@ -495,7 +558,7 @@ func (T *ToSring) MathSubtract(args ...interface{}) (num float64) {
 
 // 乘
 
-func (T *ToSring) MathMultiply(args ...interface{}) (num float64) {
+func (T *ToString) MathMultiply(args ...interface{}) (num float64) {
 	num = 0.00
 	var tmp float64
 
@@ -536,7 +599,7 @@ func (T *ToSring) MathMultiply(args ...interface{}) (num float64) {
 }
 
 // 除divide
-func (T *ToSring) MathDivide(args ...interface{}) (num float64) {
+func (T *ToString) MathDivide(args ...interface{}) (num float64) {
 	num = 0.00
 	var tmp float64
 
@@ -579,7 +642,7 @@ func (T *ToSring) MathDivide(args ...interface{}) (num float64) {
 
 
 // 幂运算
-func (T *ToSring) MathPow(args ...interface{}) (num float64) {
+func (T *ToString) MathPow(args ...interface{}) (num float64) {
 	num = 0.00
 	var tmp float64
 
@@ -623,7 +686,7 @@ func (T *ToSring) MathPow(args ...interface{}) (num float64) {
 
 
 // 取余数
-func (T *ToSring) MathRemainder(args ...interface{}) (num int) {
+func (T *ToString) MathRemainder(args ...interface{}) (num int) {
 	num = 0
 	var tmp int
 
@@ -663,7 +726,7 @@ func (T *ToSring) MathRemainder(args ...interface{}) (num int) {
 	return
 }
 
-func (T *ToSring) Byte(arg interface{}) (bytes []byte) {
+func (T *ToString) Byte(arg interface{}) (bytes []byte) {
 	tmp := ""
 	switch T.TypeOf(arg) {
 	case "nil":
@@ -701,28 +764,28 @@ func (T *ToSring) Byte(arg interface{}) (bytes []byte) {
 	return
 }
 
-func (T *ToSring) Uint(arg interface{}) (uints uint) {
+func (T *ToString) Uint(arg interface{}) (uints uint) {
 	str := T.Str(arg)
 	_ = T.StrToUint(str, &uints)
 	return
 }
-func (T *ToSring) Uint8(arg interface{}) (uints uint8) {
+func (T *ToString) Uint8(arg interface{}) (uints uint8) {
 	str := T.Str(arg)
 	_ = T.StrToUint(str, &uints)
 	return
 }
-func (T *ToSring) Uint16(arg interface{}) (uints uint16) {
+func (T *ToString) Uint16(arg interface{}) (uints uint16) {
 	str := T.Str(arg)
 	_ = T.StrToUint(str, &uints)
 	return
 }
-func (T *ToSring) Uint32(arg interface{}) (uints uint32) {
+func (T *ToString) Uint32(arg interface{}) (uints uint32) {
 	str := T.Str(arg)
 	_ = T.StrToUint(str, &uints)
 	return
 }
 
-func (T *ToSring)StrToUint(strNumber string, value interface{}) (err error) {
+func (T *ToString)StrToUint(strNumber string, value interface{}) (err error) {
 	var number interface{}
 	number, err = strconv.ParseUint(strNumber, 10, 64)
 	switch v := number.(type) {
@@ -744,7 +807,7 @@ func (T *ToSring)StrToUint(strNumber string, value interface{}) (err error) {
 }
 
 
-func (T *ToSring) Time(arg interface{}) (times time.Time) {
+func (T *ToString) Time(arg interface{}) (times time.Time) {
 	tmp := ""
 	switch T.TypeOf(arg) {
 	case "nil":
@@ -785,7 +848,7 @@ func (T *ToSring) Time(arg interface{}) (times time.Time) {
 
 
 //弱类型转换 喵
-func (T *ToSring) IsSame(args ...interface{}) (isSame bool) {
+func (T *ToString) IsSame(args ...interface{}) (isSame bool) {
 	isSame = false
 	tmp :=""
 	tmpMaster :=""
@@ -904,7 +967,7 @@ func (T *ToSring) IsSame(args ...interface{}) (isSame bool) {
 
 
 
-func (T *ToSring) Split(arg string ,l string)(value  []string){
+func (T *ToString) Split(arg string ,l string)(value  []string){
 	value = make([]string,0)
 	if arg == "" {
 		return
@@ -914,7 +977,7 @@ func (T *ToSring) Split(arg string ,l string)(value  []string){
 }
 
 
-func (T *ToSring)Json(mapInstances interface{}) (jsonStr string, err error)  {
+func (T *ToString)Json(mapInstances interface{}) (jsonStr string, err error)  {
 	jsonStrs, err := json.Marshal(mapInstances)
 	jsonStr = ""
 	if err != nil {
@@ -926,7 +989,7 @@ func (T *ToSring)Json(mapInstances interface{}) (jsonStr string, err error)  {
 
 
 
-func (T *ToSring)JsonToMaps(mapInstances interface{}) (mapInstance []map[string]string, err error)  {
+func (T *ToString)JsonToMaps(mapInstances interface{}) (mapInstance []map[string]string, err error)  {
 	jsonStrs, err := json.Marshal(mapInstances)
 	if err != nil {
 		return
@@ -934,19 +997,19 @@ func (T *ToSring)JsonToMaps(mapInstances interface{}) (mapInstance []map[string]
 	err = json.Unmarshal(jsonStrs, &mapInstance)
 	return
 }
-func (T *ToSring)JsonToInterface(mapInstances interface{}) (mapInstance []map[string]interface{}, err error)  {
+func (T *ToString)JsonToInterface(mapInstances interface{}) (mapInstance []map[string]interface{}, err error)  {
 	jsonStr := T.Byte(mapInstances)
 	err = json.Unmarshal(jsonStr, &mapInstance)
 	return
 }
-func (T *ToSring)JsonToInterfaceFirst(mapInstances interface{}) (mapInstance map[string]interface{}, err error)  {
+func (T *ToString)JsonToInterfaceFirst(mapInstances interface{}) (mapInstance map[string]interface{}, err error)  {
 	jsonStr := T.Byte(mapInstances)
 	err = json.Unmarshal(jsonStr, &mapInstance)
 	return
 }
 
 
-func (T *ToSring)JsonToMap(mapInstances interface{}) (mapInstance map[string]string, err error)  {
+func (T *ToString)JsonToMap(mapInstances interface{}) (mapInstance map[string]string, err error)  {
 	jsonStrs, err := json.Marshal(mapInstances)
 	if err != nil {
 		return

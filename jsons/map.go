@@ -8,7 +8,7 @@ import (
 type Map struct {
 }
 func (m *Map)Encode(mapInstance map[string]string) (jsonStr string, err error)  {
-	T := new(simple_variable.ToSring)
+	T := new(simple_variable.ToString)
 	jsonStrs, err := json.Marshal(mapInstance)
 	jsonStr = ""
 	if err != nil {
@@ -19,7 +19,7 @@ func (m *Map)Encode(mapInstance map[string]string) (jsonStr string, err error)  
 }
 
 func (m *Map)Decode(jsonInstance string) (mapInstance map[string]string, err error)  {
-	T := new(simple_variable.ToSring)
+	T := new(simple_variable.ToString)
 	jsonStr := T.Byte(jsonInstance)
 	err = json.Unmarshal([]byte(jsonStr), &mapInstance)
 	return

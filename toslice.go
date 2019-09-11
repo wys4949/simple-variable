@@ -17,7 +17,7 @@ func (T *ToSlice) Test( args ...string) (results bool ){
 
 //切片map截取
 func (T *ToSlice) Column(slices []map[string]string, args ...string) (results []map[string]string ){
-	//S := new(ToSring)
+	//S := new(ToString)
 	results = make([]map[string]string,0)
 	if len(slices) == 0 {
 		return
@@ -41,7 +41,7 @@ func (T *ToSlice) Column(slices []map[string]string, args ...string) (results []
 
 
 // 判断是否为slcie数据
-func (T *ToSlice) isSlice(arg interface{}) (val reflect.Value, ok bool) {
+func (T *ToSlice) IsSlice(arg interface{}) (val reflect.Value, ok bool) {
 	val = reflect.ValueOf(arg)
 
 	if val.Kind() == reflect.Slice {
@@ -56,7 +56,7 @@ func (T *ToSlice) isSlice(arg interface{}) (val reflect.Value, ok bool) {
 
 // interface{}转为 []interface{}
 func  (T *ToSlice) CreateAnyTypeSlice(slice interface{}) ([]interface{}, bool) {
-	val, ok := T.isSlice(slice)
+	val, ok := T.IsSlice(slice)
 
 	if !ok {
 		return nil, false
@@ -87,7 +87,7 @@ func (T *ToSlice) ColumnOne(args []map[string]string ,l string)(value  []string)
 
 func (T *ToSlice) Join(args []string ,l string)(value  string){
 
-	//TS := new(ToSring)
+	//TS := new(ToString)
 	if len(args) == 0 {
 		return
 	}
@@ -103,7 +103,7 @@ func (T *ToSlice) Join(args []string ,l string)(value  string){
 
 //判断是否在切片中
 func (T *ToSlice) InSlice(args []string ,l string)(value  bool){
-	//TS := new(ToSring)
+	//TS := new(ToString)
 	if len(args) == 0 {
 		return
 	}

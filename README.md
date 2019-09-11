@@ -8,7 +8,7 @@ This is a library for parameter conversion
 	//params1 :=323.22  //float64
 	//params1 :=time.Now().Unix()  //time is int64
 	params1 :=3.988812
-	T := new(simple_variable.ToSring)  
+	T := new(simple_variable.ToString)  
 	//type1 :=T.TypeOf(params1) //get type
 	//values := T.Str(params1)  //to string
 	//values := T.Int(params1) //to int

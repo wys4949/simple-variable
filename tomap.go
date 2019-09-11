@@ -6,7 +6,7 @@ type ToMap struct {
 
 }
 func (T *ToMap)Struct2Map(obj interface{}) map[string]string {
-	S := new(ToSring)
+	S := new(ToString)
 	obj_v := reflect.ValueOf(obj)
 	v := obj_v.Elem()
 	typeOfType := v.Type()
@@ -19,7 +19,7 @@ func (T *ToMap)Struct2Map(obj interface{}) map[string]string {
 }
 
 func (T *ToMap)Struct2MapInterface(obj interface{}) map[string]interface{} {
-	S := new(ToSring)
+	S := new(ToString)
 	obj_v := reflect.ValueOf(obj)
 	v := obj_v.Elem()
 	typeOfType := v.Type()
@@ -53,7 +53,7 @@ func (T *ToMap)Struct2Maps(objs []map[string]string) (newobjs []map[string]strin
 }
 //切片转 指定key map
 func (T *ToMap) MapColumn(slices []map[interface{}]interface{}, arg string) (results map[interface{}]map[interface{}]interface{} ){
-	//S := new(ToSring)
+	//S := new(ToString)
 	results = map[interface{}]map[interface{}]interface{}{}
 	if len(slices) == 0 {
 		return
@@ -70,7 +70,7 @@ func (T *ToMap) MapColumn(slices []map[interface{}]interface{}, arg string) (res
 }
 //切片转 指定key map
 func (T *ToMap) StrMapColumn(slices []map[string]string, arg string) (results map[string]map[string]string ){
-	//S := new(ToSring)
+	//S := new(ToString)
 	results = map[string]map[string]string{}
 	if len(slices) == 0 {
 		return
@@ -90,7 +90,7 @@ func (T *ToMap) StrMapColumn(slices []map[string]string, arg string) (results ma
 
 //切片转 指定key map
 func (T *ToMap) Reverse(arg map[string]string) (results map[string]string ){
-	//S := new(ToSring)
+	//S := new(ToString)
 	results = map[string]string{}
 	//var ks string
 	for k,v := range arg{
@@ -100,3 +100,33 @@ func (T *ToMap) Reverse(arg map[string]string) (results map[string]string ){
 }
 
 //flip
+
+
+//判断是否在map中
+func (T *ToMap) InMap(args map[string]string ,l string)(value  bool){
+	//TS := new(ToString)
+	if len(args) == 0 {
+		return
+	}
+	value = false
+	for _, val := range args {
+		if val == l{
+			value = true
+			break
+		}
+	}
+	return
+}
+func (T *ToMap) ValueToString(args map[string]interface{} )(value  map[string]string){
+	ToString := new(ToString)
+	value = make(map[string]string)
+	for k, val := range args {
+		switch val.(type) {
+		case string:
+			value[k] = val.(string)
+		default:
+			value[k] = ToString.Str(val)
+		}
+	}
+	return
+}

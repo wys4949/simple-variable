@@ -9,7 +9,7 @@ type Slices struct {
 }
 
 func (m *Slices)Encode(mapInstances []interface{}) (jsonStr string, err error)  {
-	T := new(simple_variable.ToSring)
+	T := new(simple_variable.ToString)
 	jsonStrs, err := json.Marshal(mapInstances)
 	jsonStr = ""
 	if err != nil {
@@ -19,7 +19,7 @@ func (m *Slices)Encode(mapInstances []interface{}) (jsonStr string, err error)  
 	return
 }
 func (m *Slices)Decode(jsonInstance string) (mapInstance []string, err error)  {
-	T := new(simple_variable.ToSring)
+	T := new(simple_variable.ToString)
 	jsonStr := T.Byte(jsonInstance)
 	err = json.Unmarshal(jsonStr, &mapInstance)
 	return
