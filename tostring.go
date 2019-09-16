@@ -3,6 +3,7 @@ package simple_variable
 import (
 	"encoding/json"
 	"math"
+	"math/rand"
 	"reflect"
 	"strconv"
 	"strings"
@@ -385,8 +386,8 @@ func (T *ToString) Int32(v interface{}) (returnVar int32) {
 		returnVar = int32(0)
 	case "int":
 		returnVar =  int32(v.(int))
-	case "int32":
-		returnVar,_ = v.(int32)
+	case "int16":
+		returnVar = int32(v.(int16))
 	case "int32":
 		returnVar =  int32(v.(int32))
 	case "int64":
@@ -1019,3 +1020,71 @@ func (T *ToString)JsonToMap(mapInstances interface{}) (mapInstance map[string]st
 }
 
 //
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const (
+	letterIdxBits = 6                    // 6 bits to represent a letter index
+	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+)
+
+func (T *ToString)RandString(n int) string {
+	b := make([]byte, n)
+	// A rand.Int63() generates 63 random bits, enough for letterIdxMax letters!
+	for i, cache, remain := n-1, rand.Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = rand.Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			b[i] = letterBytes[idx]
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return string(b)
+}
+
+
+func (T *ToString)CamelString(s string) string {
+	data := make([]byte, 0, len(s))
+	j := false
+	k := false
+	num := len(s) - 1
+	for i := 0; i <= num; i++ {
+		d := s[i]
+		if k == false && d >= 'A' && d <= 'Z' {
+			k = true
+		}
+		if d >= 'a' && d <= 'z' && (j || k == false) {
+			d = d - 32
+			j = false
+			k = true
+		}
+		if k && d == '_' && num > i && s[i+1] >= 'a' && s[i+1] <= 'z' {
+			j = true
+			continue
+		}
+		data = append(data, d)
+	}
+	return string(data[:])
+}
+
+// snake string, XxYy to xx_yy , XxYY to xx_yy
+func (T *ToString)SnakeString(s string) string {
+	data := make([]byte, 0, len(s)*2)
+	j := false
+	num := len(s)
+	for i := 0; i < num; i++ {
+		d := s[i]
+		if i > 0 && d >= 'A' && d <= 'Z' && j {
+			data = append(data, '_')
+		}
+		if d != '_' {
+			j = true
+		}
+		data = append(data, d)
+	}
+	return strings.ToLower(string(data[:]))
+}

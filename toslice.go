@@ -117,6 +117,39 @@ func (T *ToSlice) InSlice(args []string ,l string)(value  bool){
 	return
 }
 
+
+
+func (T *ToSlice) CamelString(args []string )(value  []string){
+
+	TS := new(ToString)
+	value = make([]string, 0)
+	if len(args) == 0 {
+		return
+	}
+	for _, val := range args {
+		value = append(value, TS.CamelString(val))
+	}
+	return
+}
+
+
+
+func (T *ToSlice) SnakeString(args []string )(value  []string){
+
+	TS := new(ToString)
+	value = make([]string, 0)
+	if len(args) == 0 {
+		return
+	}
+	for _, val := range args {
+		value = append(value, TS.SnakeString(val))
+	}
+	return
+}
+
+
+
+
 //
 
 

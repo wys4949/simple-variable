@@ -1,6 +1,9 @@
 package simple_variable
 
-import "reflect"
+import (
+	"database/sql"
+	"reflect"
+)
 
 type ToMap struct {
 
@@ -130,3 +133,121 @@ func (T *ToMap) ValueToString(args map[string]interface{} )(value  map[string]st
 	}
 	return
 }
+
+
+
+
+
+func (T *ToMap) RowsToMap(rows *sql.Rows)(mal []map[string]interface{},errs error)  {
+	defer rows.Close()
+	errs = nil
+	cols, _ := rows.Columns()
+	ToString := new(ToString)
+	mal =  make([]map[string]interface{},0)
+
+	for rows.Next() {
+		// Create a slice of interface{}'s to represent each column,
+		// and a second slice to contain pointers to each item in the columns slice.
+		columns := make([]interface{}, len(cols))
+		columnPointers := make([]interface{}, len(cols))
+		for i, _ := range columns {
+			columnPointers[i] = &columns[i]
+		}
+
+		// Scan the result into the column pointers...
+		if err := rows.Scan(columnPointers...); err != nil {
+			 errs = err
+		}
+
+		// Create our map, and retrieve the value for each column from the pointers slice,
+		// storing it in the map with the name of the column as the key.
+		m := make(map[string]interface{})
+		for i, colName := range cols {
+			val := columnPointers[i].(*interface{})
+			m[colName] = ToString.Str(*val)
+			mal = append(mal, m)
+		}
+
+		// Outputs: map[columnName:value columnName2:value2 columnName3:value3 ...]
+	}
+	return
+
+}
+
+
+
+func (T *ToMap)SliceToMaps(mapInstances  []interface{}) (mapInstance map[string]interface{}, err error)  {
+	err = nil
+	ToString := new(ToString)
+	mapInstance = make(map[string]interface{})
+	if len(mapInstances) == 0 {
+		return
+	}
+	for k,v := range mapInstances{
+		mapInstance[ToString.Str(k)]=v
+	}
+	return
+}
+
+
+
+func (T *ToMap)SliceToMapsInterface(mapInstances []map[string]interface{}) (mapInstance map[string]map[string]interface{}, err error)  {
+	err = nil
+	ToString := new(ToString)
+	mapInstance = make(map[string]map[string]interface{})
+	if len(mapInstances) == 0 {
+		return
+	}
+	for k,v := range mapInstances{
+		mapInstance[ToString.Str(k)]=v
+	}
+	return
+}
+func (T *ToMap)SliceToMapsString(mapInstances []map[string]interface{}) (mapInstance  map[string]map[string]string, err error)  {
+	err = nil
+	ToString := new(ToString)
+	mapInstance = make(map[string]map[string]string)
+	if len(mapInstances) == 0 {
+		return
+	}
+	for k,v := range mapInstances{
+		for key,val := range v{
+			mapInstance[ToString.Str(k)][key]= ToString.Str(val)
+		}
+	}
+	return
+}
+
+
+
+
+func (T *ToMap) ColumnOne(args map[string]map[string]interface{} ,l string)(value  map[string]interface{}){
+	value = make(map[string]interface{})
+	if len(args) == 0 {
+		return
+	}
+	for k, val := range args {
+		value[k] = val[l]
+	}
+	return
+}
+
+
+func (T *ToMap) Join(args map[string]interface{} ,l string)(value  string){
+
+	TS := new(ToString)
+	if len(args) == 0 {
+		return
+	}
+	i := 0
+	for _, val := range args {
+		if i >0 {
+			value += l
+		}
+		value += TS.Str(val)
+		i ++
+	}
+	return
+}
+
+
