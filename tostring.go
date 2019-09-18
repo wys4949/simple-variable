@@ -2,6 +2,7 @@ package simple_variable
 
 import (
 	"encoding/json"
+	"errors"
 	"math"
 	"math/rand"
 	"reflect"
@@ -987,7 +988,15 @@ func (T *ToString)Json(mapInstances interface{}) (jsonStr string, err error)  {
 	jsonStr = T.Str(jsonStrs)
 	return
 }
-
+func (T *ToString)MapJson(mapInstances map[string]interface{}) (jsonStr string, err error)  {
+	jsonStrs, err := json.Marshal(mapInstances)
+	jsonStr = ""
+	if err != nil {
+		return
+	}
+	jsonStr = T.Str(jsonStrs)
+	return
+}
 
 
 func (T *ToString)JsonToMaps(mapInstances interface{}) (mapInstance []map[string]string, err error)  {
@@ -1087,4 +1096,34 @@ func (T *ToString)SnakeString(s string) string {
 		data = append(data, d)
 	}
 	return strings.ToLower(string(data[:]))
+}
+
+//filterArray
+// snake string, XxYy to xx_yy , XxYY to xx_yy
+func (T *ToString)FilterArray(arr map[string]interface{}, keys []string, target string  ) (arrs map[string]interface{},err error) {
+	err = nil
+	ret :=  map[string]interface{}{}
+	arrs = arr
+	var condition bool
+	if len(keys) == 0 {
+		err = errors.New("过滤字段不能为空")
+		return
+	}
+	for _,v :=  range keys{
+		switch target {
+		case "empty":
+			if v == ""{
+				condition = false
+			}else{
+				condition = true
+			}
+		default:
+			condition = true
+		}
+		if !condition{
+			ret[v] = arr[v]
+		}
+	}
+	arrs = ret
+	return
 }
