@@ -83,6 +83,17 @@ func (T *ToSlice) ColumnOne(args []map[string]string ,l string)(value  []string)
 	}
 	return
 }
+func (T *ToSlice) ColumnOneInterface(args []map[string]interface{} ,l string)(value  []string){
+	TS := new(ToString)
+	value = make([]string,0)
+	if len(args) == 0 {
+		return
+	}
+	for _, val := range args {
+		value = append(value, TS.Str(val[l]))
+	}
+	return
+}
 
 
 func (T *ToSlice) Join(args []string ,l string)(value  string){
@@ -102,18 +113,35 @@ func (T *ToSlice) Join(args []string ,l string)(value  string){
 
 
 //判断是否在切片中
-func (T *ToSlice) InSlice(args []string ,l string)(value  bool){
-	//TS := new(ToString)
-	if len(args) == 0 {
-		return
-	}
-	value = false
-	for _, val := range args {
-		if val == l{
-			value = true
-			break
+func (T *ToSlice) InSlice(args interface{} ,l string)(value  bool){
+	TS := new(ToString)
+	switch args.(type) {
+		case []string:
+			if len(args.([]string)) == 0 {
+				return
+			}
+			value = false
+			for _, val := range args.([]string) {
+				if val == l{
+					value = true
+					break
+				}
+			}
+	case []interface{}:
+		if len(args.([]interface{})) == 0 {
+			return
+		}
+		value = false
+		for _, val := range args.([]interface{}) {
+			if TS.Str(val) == l{
+				value = true
+				break
+			}
 		}
 	}
+	//if value == false{
+	//	println("sdss")
+	//}
 	return
 }
 
@@ -148,6 +176,47 @@ func (T *ToSlice) SnakeString(args []string )(value  []string){
 }
 
 
+//判断切片删除key
+func (T *ToSlice) SliceDelete(args []interface{} ,k int, lenSlice int)(value []interface{}){
+	//TS := new(ToString)
+	value = args
+	if lenSlice <0 {
+		lenSlice = len(args) - 1
+	}else if lenSlice == 0{
+		return
+	}
+	if k == 0{
+		value = args[1:]
+	} else if k == lenSlice{
+		value = args[:k]
+	}else{
+		value = append(args[:k], args[k+1:]...)
+	}
+
+	return
+}
+
+
+//判断切片删除key
+func (T *ToSlice) SliceDeleteByMap(args []map[string]interface{} ,k int, lenSlice int )(value []map[string]interface{}){
+	//TS := new(ToString)
+	value = args
+	if lenSlice <0 {
+		lenSlice = len(args) - 1
+	}else if lenSlice == 0{
+		return
+	}
+	if k == 0{
+		value = args[1:]
+	}else if k == lenSlice{
+		value = args[:k-1]
+
+	}else{
+		value = append(args[:k], args[k+1:]...)
+	}
+
+	return
+}
 
 
 //

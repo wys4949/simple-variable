@@ -2,6 +2,7 @@ package simple_variable
 
 import (
 	"database/sql"
+	"errors"
 	"reflect"
 )
 
@@ -104,6 +105,35 @@ func (T *ToMap) Reverse(arg map[string]string) (results map[string]string ){
 
 //flip
 
+//判断是否在map中
+func (T *ToMap) InMapInterface(args map[string]interface{} ,l string)(value  bool){
+	//TS := new(ToString)
+	if len(args) == 0 {
+		return
+	}
+	value = false
+	for _, val := range args {
+		if val == l{
+			value = true
+			break
+		}
+	}
+	return
+}
+
+//判断是否在map中
+func (T *ToMap) InMapKeyInterface(args map[string]interface{} ,l string)(value  bool){
+	//TS := new(ToString)
+	if len(args) == 0 {
+		return
+	}
+	value = false
+	_,ok := args[l]
+	if ok {
+		value = true
+	}
+	return
+}
 
 //判断是否在map中
 func (T *ToMap) InMap(args map[string]string ,l string)(value  bool){
@@ -144,6 +174,9 @@ func (T *ToMap) RowsToMap(rows *sql.Rows)(mal []map[string]interface{},errs erro
 	cols, _ := rows.Columns()
 	ToString := new(ToString)
 	mal =  make([]map[string]interface{},0)
+	if rows == nil{
+		errs = errors.New("空的不能转换")
+	}
 
 	for rows.Next() {
 		// Create a slice of interface{}'s to represent each column,
@@ -165,9 +198,8 @@ func (T *ToMap) RowsToMap(rows *sql.Rows)(mal []map[string]interface{},errs erro
 		for i, colName := range cols {
 			val := columnPointers[i].(*interface{})
 			m[colName] = ToString.Str(*val)
-			mal = append(mal, m)
 		}
-
+		mal = append(mal, m)
 		// Outputs: map[columnName:value columnName2:value2 columnName3:value3 ...]
 	}
 	return

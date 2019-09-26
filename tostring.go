@@ -3,6 +3,7 @@ package simple_variable
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"math"
 	"math/rand"
 	"reflect"
@@ -53,6 +54,8 @@ func (T *ToString) Str(v interface{}) (returnVar  string) {
 		returnVar = strconv.FormatFloat(v.(float64), 'f', -1, 64)
 	case "[]uint8":
 		returnVar = string(v.([]byte)[:])
+	case "[]byte":
+		returnVar = T.ByteString(v.([]byte))
 	case "time.Time":
 		returnVar =  v.(time.Time).Format("2006-01-02 15:04:05")
 	case  "bool":
@@ -109,7 +112,29 @@ func (T *ToString) StrAdd(args ...interface{}) (str string) {
 
 	return
 }
+// String 将 `[]byte` 转换为 `string`
+func (T *ToString)ByteString(b []byte) string {
+	for idx, c := range b {
+		if c == 0 {
+			return string(b[:idx])
+		}
+	}
+	return string(b)
+}
 
+// StringWithoutZero 将 `[]byte` 转换为 `string`
+func (T *ToString)ByteStringWithoutZero(b []byte) string {
+	s := make([]rune, len(b))
+	offset := 0
+	for i, c := range b {
+		if c == 0 {
+			offset++
+		} else {
+			s[i-offset] = rune(c)
+		}
+	}
+	return string(s[:len(b)-offset-1])
+}
 
 func (T *ToString) StrSubtract(args ...interface{}) (str string) {
 	str = ""
@@ -270,11 +295,17 @@ func (T *ToString) Int(v interface{}) (returnVar int) {
 	case "int32":
 		returnVar = int(v.(int32))
 	case "string":
-		returnVar,_ = strconv.Atoi(v.(string))
+		tmp,_ :=strconv.ParseFloat(v.(string), 64)
+		returnVar, _ =    strconv.Atoi( fmt.Sprintf("%1.0f", tmp))
+		//returnVar,_ = strconv.Atoi(v.(string))
 	case "float64":
-		returnVar, _ =    strconv.Atoi( strconv.FormatFloat(v.(float64), 'f', -1, 64))
+		//returnVar, _ =    strconv.Atoi( strconv.FormatFloat(v.(float64), 'f', -1, 64))
+		returnVar, _ =    strconv.Atoi( fmt.Sprintf("%1.0f", v.(float64)))
+
 	case "float32":
-		returnVar, _ =  strconv.Atoi( strconv.FormatFloat(v.(float64), 'f', -1, 32))
+		//returnVar, _ =  strconv.Atoi( strconv.FormatFloat(v.(float64), 'f', -1, 32))
+		returnVar, _ =    strconv.Atoi( fmt.Sprintf("%1.0f", v.(float32)))
+
 	case  "bool":
 		if v.(bool) == false {
 			returnVar = 0
@@ -301,11 +332,16 @@ func (T *ToString) Int64(v interface{}) (returnVar int64) {
 	case "int32":
 		returnVar = int64(v.(int32))
 	case "string":
-		returnVar,_ = strconv.ParseInt(v.(string), 10, 64)
+		returnVar = int64( T.Int(v.(string)))
 	case "float64":
-		returnVar =  int64( math.Floor( v.(float64)))
+		//returnVar =  int64( math.Floor( v.(float64)))
+
+		returnVar =  int64( T.Int(v.(float64)))
+
 	case "float32":
-		returnVar = int64( math.Floor( v.(float64)))
+		//returnVar = int64( math.Floor( v.(float64)))
+		returnVar =  int64( T.Int(v.(float32)))
+
 	case  "bool":
 		if v.(bool) == false {
 			returnVar =int64(0)
@@ -331,12 +367,15 @@ func (T *ToString) Int16(v interface{}) (returnVar int16) {
 	case "int64":
 		returnVar = int16(v.(int64))
 	case "string":
-		rVTmp,_ := strconv.Atoi(v.(string))
-		returnVar = int16( rVTmp)
+		returnVar = int16( T.Int(v.(string)))
+
 	case "float64":
-		returnVar =  int16( math.Floor( v.(float64)))
+		//returnVar =  int16( math.Floor( v.(float64)))
+		returnVar =  int16( T.Int(v.(float64)))
 	case "float32":
-		returnVar = int16( math.Floor( v.(float64)))
+		//returnVar = int16( math.Floor( v.(float64)))
+		returnVar =  int16( T.Int(v.(float64)))
+
 	case  "bool":
 		if v.(bool) == false {
 			returnVar =int16(0)
@@ -363,12 +402,11 @@ func (T *ToString) Int8(v interface{}) (returnVar int8) {
 	case "int64":
 		returnVar = int8(v.(int64))
 	case "string":
-		rVTmp,_ := strconv.Atoi(v.(string))
-		returnVar = int8( rVTmp)
+		returnVar = int8( T.Int(v.(string)))
 	case "float64":
-		returnVar =  int8( math.Floor( v.(float64)))
+		returnVar = int8( T.Int(v.(float64)))
 	case "float32":
-		returnVar = int8( math.Floor( v.(float64)))
+		returnVar = int8( T.Int(v.(float32)))
 	case  "bool":
 		if v.(bool) == false {
 			returnVar =int8(0)
@@ -394,12 +432,12 @@ func (T *ToString) Int32(v interface{}) (returnVar int32) {
 	case "int64":
 		returnVar = int32(v.(int64))
 	case "string":
-		rVTmp,_ := strconv.Atoi(v.(string))
-		returnVar = int32( rVTmp)
+		returnVar = int32( T.Int(v.(string)))
+
 	case "float64":
-		returnVar =  int32( math.Floor( v.(float64)))
+		returnVar = int32( T.Int(v.(float64)))
 	case "float32":
-		returnVar = int32( math.Floor( v.(float64)))
+		returnVar = int32( T.Int(v.(float32)))
 	case  "bool":
 		if v.(bool) == false {
 			returnVar =int32(0)
@@ -755,6 +793,8 @@ func (T *ToString) Byte(arg interface{}) (bytes []byte) {
 		tmp =  T.Str(arg.(float64))
 	case "float32":
 		tmp =  T.Str(arg.(float32))
+	case "[]byte":
+		tmp =   T.Str(arg.(byte))
 	case "bool":
 		if arg.(bool) == false {
 			tmp = ""
@@ -1030,29 +1070,18 @@ func (T *ToString)JsonToMap(mapInstances interface{}) (mapInstance map[string]st
 
 //
 
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-const (
-	letterIdxBits = 6                    // 6 bits to represent a letter index
-	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
-	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
-)
+
 
 func (T *ToString)RandString(n int) string {
-	b := make([]byte, n)
-	// A rand.Int63() generates 63 random bits, enough for letterIdxMax letters!
-	for i, cache, remain := n-1, rand.Int63(), letterIdxMax; i >= 0; {
-		if remain == 0 {
-			cache, remain = rand.Int63(), letterIdxMax
-		}
-		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
-			b[i] = letterBytes[idx]
-			i--
-		}
-		cache >>= letterIdxBits
-		remain--
+	str := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	bytes := []byte(str)
+	result := []byte{}
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; i < n; i++ {
+		result = append(result, bytes[r.Intn(len(bytes))])
 	}
+	return string(result)
 
-	return string(b)
 }
 
 
@@ -1127,3 +1156,35 @@ func (T *ToString)FilterArray(arr map[string]interface{}, keys []string, target 
 	arrs = ret
 	return
 }
+
+func (T *ToString)TimeStamp(datetime string) (timestamp string) {
+	//日期转化为时间戳
+	timeLayout := "2006-01-02 15:04:05"  //转化所需模板
+	loc, _ := time.LoadLocation("Local")    //获取时区
+	tmp, _ := time.ParseInLocation(timeLayout, datetime, loc)
+	timestampInt64 := tmp.Unix()
+	timestamp= T.Str(timestampInt64)    //转化为时间戳 类型是int64
+	return
+}
+func (T *ToString)SliceToString(Slices []interface{}) (Strs []string) {
+	//日期转化为时间戳
+	Strs = make([]string,0)
+	for _,strategyGroupsAccountStr := range Slices{
+		Strs = append(Strs, T.Str(strategyGroupsAccountStr))
+	}
+	return
+}
+
+func (T *ToString)RegBetween(str, starting, ending string) string {
+	s := strings.Index(str, starting)
+	if s < 0 {
+		return ""
+	}
+	s += len(starting)
+	e := strings.Index(str[s:], ending)
+	if e < 0 {
+		return ""
+	}
+	return str[s : s+e]
+}
+
