@@ -883,7 +883,8 @@ func (T *ToString) Time(arg interface{}) (times time.Time) {
 			tmp = "1"
 		}
 	}
-	times,_  = time.Parse("2006-01-02 15:04:05",tmp)
+	local, _ := time.LoadLocation("Local")
+	times, _ = time.ParseInLocation("2006-01-02 15:04:05", tmp, local)
 	return
 }
 
