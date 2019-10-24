@@ -1,6 +1,8 @@
 package simple_variable
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -1150,7 +1152,7 @@ func (T *ToString)FilterArray(arr map[string]interface{}, keys []string, target 
 		default:
 			condition = true
 		}
-		if !condition{
+		if condition{
 			ret[v] = arr[v]
 		}
 	}
@@ -1187,5 +1189,13 @@ func (T *ToString)RegBetween(str, starting, ending string) string {
 		return ""
 	}
 	return str[s : s+e]
+}
+
+func (T *ToString) HashHmacBySha256(str string, key string)(retStr string , err error)  {
+	keys := []byte(key)
+	mac := hmac.New(sha256.New, keys)
+	mac.Write([]byte(str))
+	retStr = T.Str(mac.Sum(nil))
+	return
 }
 
