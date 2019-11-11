@@ -56,9 +56,9 @@ func (T *ToMap)Struct2Maps(objs []map[string]string) (newobjs []map[string]strin
 	return
 }
 //切片转 指定key map
-func (T *ToMap) MapColumn(slices []map[interface{}]interface{}, arg string) (results map[interface{}]map[interface{}]interface{} ){
-	//S := new(ToString)
-	results = map[interface{}]map[interface{}]interface{}{}
+func (T *ToMap) SliceMapColumn(slices []map[string]interface{}, arg string) (results map[string]map[string]interface{} ){
+	TS := new(ToString)
+	results = map[string]map[string]interface{}{}
 	if len(slices) == 0 {
 		return
 	}
@@ -68,10 +68,38 @@ func (T *ToMap) MapColumn(slices []map[interface{}]interface{}, arg string) (res
 		if !ok{
 			continue
 		}
-		results[v[arg]] = v
+		results[TS.Str(v[arg])] = v
 	}
 	return
 }
+
+
+//切片转 指定key map
+func (T *ToMap) SliceMapColumns(slices []map[string]interface{}, args ...string) (results map[string]map[string]interface{} ){
+	TS := new(ToString)
+	results = map[string]map[string]interface{}{}
+	var argKey string
+	if len(slices) == 0 {
+		return
+	}
+	//var ks string
+	for _,v := range slices{
+		argKey = ""
+		for _, arg := range args {
+
+			keyS,ok := v[arg]
+			if !ok{
+				continue
+			}
+			key := TS.Str(keyS)
+			argKey += key +"-"
+
+		}
+		results[argKey] = v
+	}
+	return
+}
+
 //切片转 指定key map
 func (T *ToMap) StrMapColumn(slices []map[string]string, arg string) (results map[string]map[string]string ){
 	//S := new(ToString)
