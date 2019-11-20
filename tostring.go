@@ -907,6 +907,44 @@ func (T *ToString) Time(arg interface{}) (times time.Time) {
 }
 
 
+func (T *ToString) TimeV2(arg interface{}) (times time.Time) {
+	tmp := ""
+	switch T.TypeOf(arg) {
+	case "nil":
+		tmp =  T.Str(0)
+	case "uint":
+		tmp =  T.Str(arg.(uint))
+	case "uint8":
+		tmp =  T.Str(arg.(uint8))
+	case "uint32":
+		tmp =  T.Str(arg.(uint32))
+	case "uint64":
+		tmp =  T.Str(arg.(uint64))
+	case "int":
+		tmp =  T.Str(arg.(int))
+	case "string":
+		tmp =  T.Str(arg.(string))
+	case "int64":
+		tmp =  T.Str(arg.(int64))
+	case "int32":
+		tmp =  T.Str(arg.(int32))
+	case "int16":
+		tmp =  T.Str(arg.(int16))
+	case "float64":
+		tmp =  T.Str(arg.(float64))
+	case "float32":
+		tmp =  T.Str(arg.(float32))
+	case "bool":
+		if arg.(bool) == false {
+			tmp = ""
+		}else if  arg.(bool) == true{
+			tmp = "1"
+		}
+	}
+	local, _ := time.LoadLocation("Local")
+	times, _ = time.ParseInLocation("20060102", tmp, local)
+	return
+}
 
 //弱类型转换 喵
 func (T *ToString) IsSame(args ...interface{}) (isSame bool) {
@@ -1215,3 +1253,11 @@ func (T *ToString) HashHmacBySha256(str string, key string)(retStr string , err 
 	return
 }
 
+func (T *ToString)GetDayDate(date string,day int) (ltDate string){
+	dateto := T.TimeV2(date)
+	h := T.Str(day * 24)
+	d ,_:= time.ParseDuration("+"+h+"h")
+	etm := dateto.Add(d)
+	ltDate = etm.Format("20060102")
+	return ltDate
+}
