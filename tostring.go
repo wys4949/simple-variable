@@ -1261,3 +1261,21 @@ func (T *ToString)GetDayDate(date string,day int) (ltDate string){
 	ltDate = etm.Format("20060102")
 	return ltDate
 }
+//获取周一0分的时间戳
+func (T *ToString)GetMondayTime() (totime int64) {
+	now := time.Now()
+	offset := int(time.Monday - now.Weekday())
+	if offset > 0 {
+		offset = -6
+	}
+	weekStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local).AddDate(0, 0, offset)
+	totime = weekStart.Unix()
+	return
+}
+//获取指定时间戳 到周一 0分的位数
+func (T *ToString)GetNowtoMondayTime(NowTime int64,Num int) ( location int) {
+
+	totime := T.GetMondayTime()
+	location = T.Int(T.Int(NowTime - totime)/(60*Num)) - 1
+	return
+}
