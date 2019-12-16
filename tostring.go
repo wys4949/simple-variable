@@ -1276,6 +1276,6 @@ func (T *ToString)GetMondayTime() (totime int64) {
 func (T *ToString)GetNowtoMondayTime(NowTime int64,Num int) ( location int) {
 
 	totime := T.GetMondayTime()
-	location = T.Int(T.Int(NowTime - totime)/(60*Num)) - 1
+	location = T.Int(T.Int(NowTime - totime)/(60*Num))
 	return
 }
