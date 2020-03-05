@@ -1115,6 +1115,12 @@ func (T *ToString)JsonToInterfaceFirst(mapInstances interface{}) (mapInstance ma
 	return
 }
 
+func (T *ToString)JsonToInterfaceAll(mapInstances interface{}) (mapInstance interface{}, err error)  {
+	jsonStr := T.Byte(mapInstances)
+	err = json.Unmarshal(jsonStr, &mapInstance)
+	return
+}
+
 
 func (T *ToString)JsonToMap(mapInstances interface{}) (mapInstance map[string]string, err error)  {
 	jsonStrs, err := json.Marshal(mapInstances)
